@@ -1,6 +1,5 @@
 -- Creación y uso de la base de datos
-CREATE DATABASE IF NOT EXISTS biblioia;
-USE biblioia;
+use localhost2;
 
 -- ==========================================
 -- 1. TABLAS DE CATÁLOGO (Sin dependencias)
