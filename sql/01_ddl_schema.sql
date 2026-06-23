@@ -1,6 +1,3 @@
--- Creación y uso de la base de datos
-use localhost2;
-
 -- ==========================================
 -- 1. TABLAS DE CATÁLOGO (Sin dependencias)
 -- ==========================================
@@ -60,6 +57,7 @@ CREATE TABLE EJEMPLAR (
     nro_ejemplar INT NOT NULL,
     estado_fisico VARCHAR(20) DEFAULT 'ACTIVO',
     CONSTRAINT chk_estado_fisico CHECK (estado_fisico IN ('ACTIVO', 'REGULAR', 'MALO', 'BAJA')),
+    CONSTRAINT nro_ejemplar_unico UNIQUE (isbn, nro_ejemplar),
     FOREIGN KEY (isbn) REFERENCES LIBRO(isbn) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -99,4 +97,18 @@ CREATE TABLE SANCION (
     fecha_fin DATE NOT NULL,
     motivo TEXT,
     FOREIGN KEY (id_socio) REFERENCES SOCIO(id_socio) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- ==========================================
+-- 4. TABLA DE AUDITORÍA DE PRÉSTAMOS
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS AUDITORIA_PRESTAMOS (
+    id_auditoria INT AUTO_INCREMENT PRIMARY KEY,
+    id_prestamo INT,
+    operacion VARCHAR(10) NOT NULL,
+    estado_anterior VARCHAR(20),
+    estado_nuevo VARCHAR(20),
+    usuario VARCHAR(100) NOT NULL,
+    fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
