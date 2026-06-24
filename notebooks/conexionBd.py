@@ -8,11 +8,15 @@ load_dotenv(dotenv_path='C:\\Users\\sofit\\BiblioIA\\.env')
 
 def consultar_base_de_datos(consulta_sql):
     """
-    Ejecuta una consulta SQL y la devuelve como un DataFrame de Pandas limpio.
-    Retorna: (DataFrame, None) si es exitoso, o (None, mensaje_error) si falla.
+    Ejecuta una consulta SQL segura y la devuelve como un DataFrame de Pandas limpio.
     """
-    conexion = None
-    
+    # --- BARRERA DE SEGURIDAD (Lista Blanca) ---
+    consulta_limpia = consulta_sql.strip().upper()
+    if not consulta_limpia.startswith("SELECT"):
+        mensaje_error = "Error de Seguridad: Operación denegada. El sistema es de solo lectura y solo permite sentencias 'SELECT'."
+        return None, mensaje_error
+
+    conexion = None  # ✅ CORREGIDO: Era "conexion = None," (con coma)
     try:
         # 1. Establecer la conexión con MySQL
         conexion = mysql.connector.connect(

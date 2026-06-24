@@ -9,14 +9,13 @@ API_KEY = os.getenv("LLM_API_KEY")
 if not API_KEY:
     raise ValueError("Error: No se encontró la variable LLM_API_KEY en el archivo .env")
 
-# Intentamos importar la nueva librería recomendada por Google 'google-genai'
+# Usar la versión estable de google-generativeai
 try:
-    from google import genai
-    from google.genai import types
-    USAR_NUEVA_API = True
-except ImportError:
     import google.generativeai as genai
-    USAR_NUEVA_API = False
+except ImportError:
+    print("❌ Error: google-generativeai no está instalada.")
+    print("Instala con: pip install google-generativeai")
+    sys.exit(1)
 
 # DEFINICIÓN DEL SYSTEM PROMPT (Esquema de la biblioteca BiblioIA)
 SYSTEM_PROMPT = """
@@ -105,38 +104,29 @@ def text_to_sql(pregunta: str) -> str:
     Recibe una pregunta en lenguaje natural y utiliza la API de Gemini
     para traducirla a código SQL limpio y ejecutable en MySQL.
     """
-    MODELO_RECOMENDADO = "gemini-2.5-flash"
+    MODELO_RECOMENDADO = "gemini-2.0-flash"  # Modelo más estable y rápido
 
     try:
-        if USAR_NUEVA_API:
-            client = genai.Client(api_key=API_KEY)
-            response = client.models.generate_content(
-                model=MODELO_RECOMENDADO,
-                contents=pregunta,
-                config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM_PROMPT,
-                    temperature=0.0,
-                    max_output_tokens=300
-                )
-            )
-            sql_query = response.text.strip()
-        else:
-            import warnings
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                genai.configure(api_key=API_KEY)
-                model = genai.GenerativeModel(
-                    model_name=MODELO_RECOMENDADO,
-                    system_instruction=SYSTEM_PROMPT
-                )
-                config = genai.types.GenerationConfig(
-                    temperature=0.0,
-                    max_output_tokens=300
-                )
-                response = model.generate_content(pregunta, generation_config=config)
-                sql_query = response.text.strip()
+        # Configurar la API
+        genai.configure(api_key=API_KEY)
+        
+        # Crear el modelo
+        model = genai.GenerativeModel(
+            model_name=MODELO_RECOMENDADO,
+            system_instruction=SYSTEM_PROMPT
+        )
+        
+        # Configuración de generación
+        config = genai.types.GenerationConfig(
+            temperature=0.0,
+            max_output_tokens=300
+        )
+        
+        # Hacer la llamada a la API
+        response = model.generate_content(pregunta, generation_config=config)
+        sql_query = response.text.strip()
 
-        # Sanitización de bloques Markdown
+        # Sanitización de bloques Markdown (por si acaso)
         if sql_query.startswith("```sql"):
             sql_query = sql_query.replace("```sql", "").replace("```", "").strip()
         elif sql_query.startswith("```"):
@@ -147,6 +137,7 @@ def text_to_sql(pregunta: str) -> str:
     except Exception as e:
         print(f"\n[ERROR EN LA API DE GEMINI]")
         print(f"Detalle del error: {e}")
+        print(f"Tipo de error: {type(e).__name__}")
         raise e
 
 # ==========================================
