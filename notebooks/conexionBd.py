@@ -64,8 +64,6 @@ def consultar_base_de_datos(consulta_sql):
         if conexion is not None and conexion.is_connected():
             conexion.close()
 
-# Esto queda comentado porque son pruebas de conexión, si quieren prueben en su compu. Descarguen el 
-#archivo .env con su contraseña de MySQL
 """"  
 if __name__ == '__main__':
     print("Iniciando pruebas de conexión...\n")

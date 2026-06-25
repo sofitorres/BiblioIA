@@ -66,3 +66,9 @@ BEGIN
     INSERT INTO AUDITORIA_PRESTAMOS (id_prestamo, operacion, estado_anterior, estado_nuevo, usuario)
     VALUES (OLD.id_prestamo, 'DELETE', OLD.estado, NULL, CURRENT_USER());
 END;
+
+-- Prueba de Renovación en término (Préstamo activo 37 de la carga de prueba)
+CALL sp_renovar_prestamo(37);
+SELECT * FROM AUDITORIA_PRESTAMOS WHERE id_prestamo = 37;
+-- Socio suspendido que intenta realizar un prestamo
+CALL sp_registrar_prestamo(4,2);

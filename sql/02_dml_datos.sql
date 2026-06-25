@@ -167,9 +167,3 @@ UPDATE LIBRO SET stock_disponible = 4 WHERE isbn IN (
 -- Verificaciones rápidas de integridad de negocio
 SELECT titulo, stock_disponible FROM LIBRO WHERE isbn = '9780451524935';
 SELECT * FROM AUDITORIA_PRESTAMOS;
-
--- Prueba de Renovación en término (Préstamo activo 37 de la carga de prueba)
-CALL sp_renovar_prestamo(37);
-SELECT * FROM AUDITORIA_PRESTAMOS WHERE id_prestamo = 37;
--- Socio suspendido que intenta realizar un prestamo
-call sp_registrar_prestamo(4,2);
