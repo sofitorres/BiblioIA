@@ -24,8 +24,8 @@ CREATE TABLE LIBRO (
     CONSTRAINT chk_stock CHECK (stock_disponible <= stock_total AND stock_disponible >= 0)
 );
 
--- Índice en ISBN para búsquedas rápidas 
-CREATE INDEX idx_libro_isbn ON LIBRO(isbn);
+-- Índice en título para búsquedas rápidas 
+CREATE INDEX idx_libro_titulo ON LIBRO(titulo);
 
 -- ==========================================
 -- 2. TABLAS INTERMEDIAS (Relaciones N:M)
