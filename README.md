@@ -7,5 +7,4 @@ Desarrollado como Trabajo Práctico Integrador para la materia Base de Datos de 
 Tecnologías utilizadas:
 * MySQL 8+
 * Python 3.10+ (Jupyter Notebook)
-* Docker & Docker Compose
-* Integración con API de LLM
+* Gemini 2.5 Flash
